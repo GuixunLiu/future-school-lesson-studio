@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>未来学校教师备课台 · CSP-J</title>
+  <meta name="description" content="面向小学与初中CSP-J教学的双AI备课工作台。" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2311233f'/%3E%3Cpath d='M17 19h30v26H17z' fill='%237ee6c5'/%3E%3Cpath d='m28 27-6 5 6 5M36 27l6 5-6 5' fill='none' stroke='%2311233f' stroke-width='3'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./stage2.css" />
+  <link rel="stylesheet" href="./settings.css" />
+  <link rel="stylesheet" href="./settings2.css" />
+  <link rel="stylesheet" href="./ppt-api.css" />
+  <link rel="stylesheet" href="./materials.css" />
+  <link rel="stylesheet" href="./outline.css" />
+  <link rel="stylesheet" href="./outline-fix.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">&lt;/&gt;</span><span>未来学校教师备课台</span><small>CSP-J</small></div>
+    <div class="top-actions"><span class="save-state" id="apiState">● 使用本地生成</span><button class="ghost" id="settingsBtn">⚙ 设置</button><button class="ghost" id="resetBtn">重新开始</button><div class="avatar">刘</div></div>
+  </header>
+
+  <main class="shell">
+    <aside class="rail">
+      <div class="rail-head"><span>本次备课</span><strong id="courseName">二分查找入门</strong></div>
+      <nav id="stepNav">
+        <button class="step active" data-step="0"><i>1</i><span>课程需求<small>填写基本信息</small></span></button>
+        <button class="step" data-step="1"><i>2</i><span>内容确认<small>AI 1 · 教什么</small></span></button>
+        <button class="step" data-step="2"><i>3</i><span>蓝图确认<small>AI 1 · 怎么教</small></span></button>
+        <button class="step" data-step="3"><i>4</i><span>材料审核<small>六类内容草稿</small></span></button>
+        <button class="step" data-step="4"><i>5</i><span>PPT制作<small>AI 2 · 视觉呈现</small></span></button>
+        <button class="step" data-step="5"><i>6</i><span>定稿导出<small>完整备课包</small></span></button>
+      </nav>
+      <div class="ai-card"><span class="ai-dot mint"></span><div><strong>AI 1 · 教学设计师</strong><small>课程内容、教案与练习</small></div></div>
+      <div class="ai-card"><span class="ai-dot blue"></span><div><strong>AI 2 · PPT制作师</strong><small>仅处理已确认的大纲</small></div></div>
+    </aside>
+
+    <section class="workspace">
+      <div class="stage active" data-stage="0">
+        <div class="heading"><div><span class="eyebrow">STEP 01 · 课程需求</span><h1>准备一堂怎样的课？</h1><p>先告诉教学设计师课程背景，AI不会直接生成成品。</p></div><span class="pill">草稿</span></div>
+        <div class="form-card">
+          <label class="wide">课程主题<input id="topic" value="二分查找入门" /></label>
+          <label>上课对象<select id="audience"><option>小学高年级</option><option selected>初中一年级</option><option>初中二年级</option><option>初中三年级</option></select></label>
+          <label>课程时长<select id="duration"><option>60分钟</option><option selected>90分钟</option><option>120分钟</option></select></label>
+          <label>学生水平<select id="studentLevel"><option>C++语法入门</option><option selected>CSP-J入门</option><option>CSP-J提高</option><option>冲刺备赛</option></select></label>
+          <label>课程类型<div class="segmented"><button class="selected">正式课</button><button>社团课</button></div></label>
+          <label class="wide">已掌握的前置知识<input value="循环、数组、基本输入输出" /></label>
+          <label class="wide">补充要求<textarea>安排充分的上机时间；重点讲清左右边界；不使用 STL 的 lower_bound。</textarea></label>
+        </div>
+        <div class="notice"><span>◎</span><div><strong>教师确认机制已开启</strong><p>AI将先生成课程内容建议，等待你修改确认后才会继续。</p></div></div>
+        <section class="recent-card"><div class="card-title"><h3>最近备课</h3><span class="tag">保存在当前设备</span></div><div id="recentCourses" class="recent-list"><p class="empty-note">完成一次内容确认后，课程会出现在这里。</p></div></section>
+        <div class="footer-actions"><span></span><button class="primary next">生成内容建议</button></div>
+      </div>
+
+      <div class="stage" data-stage="1">
+        <div class="heading"><div><span class="eyebrow">STEP 02 · AI 1</span><h1>确认本课教什么</h1><p>调整知识边界。确认前不会生成教案、讲义或PPT。</p></div><span class="pill amber">待确认</span></div>
+        <div class="summary-grid"><div><small>教学目标</small><strong id="goalText">理解有序序列中的折半思想，独立实现基础二分查找</strong></div><div><small>课程节奏</small><strong id="paceText">讲解 38 分钟 · 上机 42 分钟 · 总结 10 分钟</strong></div></div>
+        <div class="content-grid">
+          <section class="editor-card"><div class="card-title"><h3>本课内容</h3><button class="text-btn" id="addPoint">＋ 添加知识点</button></div><ul class="editable-list" id="contentPoints" contenteditable="true"></ul></section>
+          <section class="editor-card muted-card"><div class="card-title"><h3>本课暂不涉及</h3></div><ul class="editable-list" id="excludedPoints" contenteditable="true"></ul></section>
+        </div>
+        <section class="editor-card"><div class="card-title"><h3>建议课堂任务</h3><span class="tag">可编辑</span></div><p id="taskText" contenteditable="true"></p></section>
+        <div class="footer-actions"><button class="ghost prev">返回修改需求</button><button class="primary next">确认内容，生成教学蓝图</button></div>
+      </div>
+
+      <div class="stage" data-stage="2">
+        <div class="heading"><div><span class="eyebrow">STEP 03 · AI 1</span><h1>确认教学蓝图</h1><p>拖动思路已转换为可编辑课时表，总时长必须与课程设置一致。</p></div><span class="pill amber">待确认</span></div>
+        <div class="timeline">
+          <div class="timeline-head"><strong id="timelineTitle">90分钟课程安排</strong><span><b id="timelineTotal">90</b> / <span id="timelineLimit">90</span> 分钟</span></div>
+          <div class="bar"><i style="width:9%"></i><i style="width:17%"></i><i style="width:19%"></i><i style="width:33%"></i><i style="width:13%"></i><i style="width:9%"></i></div>
+        </div>
+        <div class="table-card"><table><thead><tr><th>环节</th><th>时间</th><th>教学内容</th><th>学生活动</th><th>达成目标</th></tr></thead><tbody id="blueprintBody">
+          <tr><td>问题导入</td><td>8分钟</td><td>顺序查找的效率瓶颈</td><td>估算查找次数</td><td>产生优化需求</td></tr>
+          <tr><td>原理讲解</td><td>15分钟</td><td>折半思想与有序前提</td><td>纸上模拟查找</td><td>理解算法原理</td></tr>
+          <tr><td>代码演示</td><td>17分钟</td><td>边界、循环与中点</td><td>跟踪变量变化</td><td>理解代码结构</td></tr>
+          <tr><td>上机练习</td><td>30分钟</td><td>完成基础查找程序</td><td>独立编程调试</td><td>掌握基本实现</td></tr>
+          <tr><td>错误分析</td><td>12分钟</td><td>越界与死循环案例</td><td>找错并修复</td><td>规避常见错误</td></tr>
+          <tr><td>总结作业</td><td>8分钟</td><td>总结、达标检测</td><td>自评与记录</td><td>巩固迁移</td></tr>
+        </tbody></table></div>
+        <div class="footer-actions"><button class="ghost prev">返回内容方案</button><button class="primary next">确认蓝图，开始逐项生成</button></div>
+      </div>
+
+      <div class="stage" data-stage="3">
+        <div class="heading"><div><span class="eyebrow">STEP 04 · AI 1</span><h1>先审核五项文字材料</h1><p>按顺序确认教案、讲义、练习、作业和家长反馈，最后再审核PPT大纲。</p></div><span class="pill amber">逐项确认</span></div>
+        <div class="material-layout"><div class="material-tabs" id="materialTabs"></div><div class="material-preview">
+          <div class="preview-head"><div><span class="tag" id="matType">PPT大纲</span><h2 id="matTitle">二分查找入门 · 18页</h2></div><div><button class="ghost small">局部改写</button><button class="ghost small">重新生成</button></div></div>
+          <div id="materialContent"></div>
+          <div class="approval"><label><input type="checkbox" id="approveCheck" /> 我已审核内容，确认作为后续生成依据</label><button class="primary" id="approveBtn">确认本项</button></div>
+        </div></div>
+        <div class="footer-actions"><button class="ghost prev">返回教学蓝图</button><button class="primary next" id="toPpt">全部确认，生成PPT</button></div>
+      </div>
+
+      <div class="stage" data-stage="4">
+        <div class="heading"><div><span class="eyebrow">STEP 05 · AI 2</span><h1>将已确认大纲制作成PPT</h1><p>AI 2只处理视觉呈现，不改变教学目标、知识点或难度。</p></div><span class="pill blue-pill">AI 2 就绪</span></div>
+        <div class="ppt-maker"><div class="ppt-controls"><div class="control-title"><div><h3>PPT生成设置</h3><small id="pptProviderLabel">尚未连接PPT服务</small></div><button class="text-btn" id="openPptSettings">连接设置</button></div><label>整体风格<select id="pptStyle"><option>深海代码 · 清晰专业</option><option>明亮课堂 · 活泼易读</option><option>竞赛冲刺 · 高对比</option><option>自定义风格</option></select></label><label>模板ID或模板链接<input id="pptTemplate" placeholder="可选，按服务商要求填写" /></label><label>页面比例<select id="pptRatio"><option value="16:9">16:9 宽屏</option><option value="4:3">4:3 标准</option></select></label><label>配图方式<select id="pptImages"><option value="generate">AI生成并自动配图</option><option value="search">检索版权可用图片</option><option value="none">不自动配图</option></select></label><label>代码主题<select id="pptCodeTheme"><option>深色语法高亮</option><option>浅色语法高亮</option></select></label><label class="switch-row"><span>包含教师备注</span><input id="pptNotes" type="checkbox" checked /></label><label class="switch-row"><span>添加页面转场</span><input id="pptAnimation" type="checkbox" checked /></label><label class="switch-row"><span>导出时嵌入字体</span><input id="pptFonts" type="checkbox" checked /></label><button class="primary full" id="makePpt">提交PPT生成任务</button><div class="ppt-job" id="pptJob"><span class="job-dot"></span><div><strong>等待提交</strong><small>提交后将在这里显示任务编号和生成进度</small></div></div><button id="resumeManus" class="secondary full" hidden>继续查询Manus任务</button><div id="manusFiles"></div><div class="ai-boundary"><strong>内容边界</strong><p>仅发送教师已确认的逐页大纲<br>AI 2 无权增删知识点或改变难度</p></div></div>
+          <div class="slide-canvas" id="slideCanvas"><div class="slide"><span class="slide-no">01 / 18</span><div class="slide-kicker">CSP-J 基础算法</div><h2>二分查找入门</h2><p>在有序数据中，更快地找到目标</p><div class="code-line"><b>while</b> (left &lt;= right) { <em>...</em> }</div><small>初中一年级 · 90分钟 · 正式课</small></div><div class="slide-strip"><button class="thumb selected">01<br><span>封面</span></button><button class="thumb">02<br><span>问题</span></button><button class="thumb">03<br><span>对比</span></button><button class="thumb">04<br><span>原理</span></button><button class="thumb">05<br><span>模拟</span></button><button class="thumb more">+13</button></div></div></div>
+        <div class="footer-actions"><button class="ghost prev">返回材料审核</button><button class="primary next">确认PPT，进入定稿</button></div>
+      </div>
+
+      <div class="stage" data-stage="5">
+        <div class="heading"><div><span class="eyebrow">STEP 06 · 完成</span><h1>整套备课已准备好</h1><p>六类材料使用同一份已确认蓝图，可以分别导出或下载完整备课包。</p></div><span class="pill success">已定稿</span></div>
+        <div class="finish-card"><div class="finish-icon">✓</div><h2>二分查找入门</h2><p>初中一年级 · CSP-J入门 · 90分钟正式课</p><div class="package-list"><div><span>▣</span><b>课堂PPT</b><small>18页 · PPTX</small><button>下载</button></div><div><span>▤</span><b>教师教案</b><small>8页 · DOCX</small><button>下载</button></div><div><span>▧</span><b>学生讲义</b><small>6页 · PDF</small><button>下载</button></div><div><span>✓</span><b>随堂练习</b><small>8题 · PDF</small><button>下载</button></div><div><span>⌂</span><b>课后作业</b><small>A/B/C三层 · PDF</small><button>下载</button></div><div><span>♡</span><b>家长反馈</b><small>通用模板 · DOCX</small><button>下载</button></div></div><button class="primary package">下载完整备课包</button></div>
+        <div class="footer-actions"><button class="ghost prev">返回检查</button><button class="ghost" id="newCourse">新建一节课</button></div>
+      </div>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+  <div class="generating" id="generating"><div class="gen-orb">AI 1</div><h3>正在整理课程内容</h3><p>分析知识范围、前置知识与课时节奏…</p><div class="gen-bar"><i></i></div></div>
+  <div class="modal-backdrop" id="settingsModal" aria-hidden="true">
+    <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-head"><div><span class="eyebrow">模型连接</span><h2 id="settingsTitle">AI 设置</h2></div><button class="close-btn" id="closeSettings" aria-label="关闭设置">×</button></div>
+      <div class="security-note"><strong>两套API各司其职</strong><p>AI 1负责文字内容，AI 2负责PPT生成。密钥仅保存在当前浏览器会话，关闭标签页后自动清除。</p></div>
+      <div class="api-section"><div class="api-section-head"><span class="api-badge mint">AI 1</span><div><strong>文字内容生成</strong><small>课程方案、教案、讲义、练习与PPT大纲</small></div></div><div class="settings-form"><label>服务商<select id="ai1Provider"><option value="openai">OpenAI</option><option value="deepseek">DeepSeek</option><option value="custom">兼容服务</option></select></label><label>模型名称<input id="ai1Model" value="gpt-5-mini" autocomplete="off" /></label><label class="wide">API 地址<input id="ai1Base" value="https://api.openai.com/v1" autocomplete="url" /></label><label class="wide">API Key<div class="key-field"><input id="ai1Key" type="password" placeholder="文字模型 API Key" autocomplete="off" /><button type="button" data-toggle="ai1Key">显示</button></div></label></div></div>
+      <div class="api-section ppt-api-section"><div class="api-section-head"><span class="api-badge blue">AI 2</span><div><strong>PPT生成服务</strong><small>兼容 Kimi 类产品及其他同步、异步 PPT API</small></div></div><div class="provider-hint" id="pptProviderHint">Kimi PPT 的公开产品能力与开放 API 并不等同；请按实际获得的接口文档填写端点。</div><div class="settings-form"><label>服务预设<select id="ai2Provider"><option value="kimi">Kimi / Moonshot（自定义端点）</option><option value="manus">Manus（官方 v2）</option><option value="async">通用异步PPT API</option><option value="sync">通用同步PPT API</option><option value="custom">其他自定义服务</option></select></label><label id="manusProfileRow" hidden>Manus执行档位<select id="ai2Profile"><option value="standard">Standard 标准</option><option value="lite">Lite 轻量</option><option value="max">Max 高性能</option></select></label><label>调用模式<select id="ai2Mode"><option value="async">异步任务：提交后轮询</option><option value="sync">同步返回：直接取得文件</option></select></label><label class="wide">API 基础地址<input id="ai2Base" placeholder="https://你的PPT服务地址/v1" autocomplete="url" /></label><label>创建任务路径<input id="ai2CreatePath" value="/presentations" autocomplete="off" /></label><label>查询任务路径<input id="ai2QueryPath" value="/presentations/{task_id}" autocomplete="off" /></label><label>鉴权方式<select id="ai2Auth"><option value="x-manus-api-key">x-manus-api-key（Manus v2）</option><option value="bearer">Authorization: Bearer</option><option value="x-api-key">X-API-Key</option><option value="none">无需鉴权</option></select></label><label>输出格式<select id="ai2Format"><option value="pptx">PPTX</option><option value="pdf">PDF</option><option value="url">在线演示链接</option></select></label><label class="wide">API Key<div class="key-field"><input id="ai2Key" type="password" placeholder="PPT服务 API Key" autocomplete="off" /><button type="button" data-toggle="ai2Key">显示</button></div></label><div class="field-map wide"><strong>返回字段映射</strong><div><label>任务编号<input id="ai2TaskField" value="task_id" /></label><label>任务状态<input id="ai2StatusField" value="status" /></label><label>下载地址<input id="ai2DownloadField" value="download_url" /></label></div></div></div></div>
+      <div class="connection-status" id="connectionStatus"><span></span><p><strong>尚未配置</strong><small>可以先只配置AI 1，稍后再配置AI 2。</small></p></div>
+      <div class="settings-actions"><button class="ghost" id="clearApi">清除全部配置</button><button class="primary" id="saveApi">保存两套设置</button></div>
+    </section>
+  </div>
+  <link rel="stylesheet" href="./export-split.css">
+  <script src="./vendor/pdf-lib.min.js"></script>
+  <script src="./vendor/fontkit.umd.min.js"></script>
+  <script src="./pdf-export.js"></script>
+  <script src="./questions.js"></script>
+  <script src="./manus-api.js"></script>
+  <script src="./app.js"></script>
+  <script src="./manus-ui.js"></script>
+  <script src="./staged-generation.js"></script>
+</body>
+</html>
